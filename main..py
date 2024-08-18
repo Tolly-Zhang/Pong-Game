@@ -1,14 +1,13 @@
-import pygame
+import pygame 
 from ball import Ball
 from paddle import Paddle
 
 def main():
     pygame.init()
     screen = pygame.display.set_mode((2560, 1600))
-    pygame.display.toggle.fullscreen()
     clock = pygame.time.Clock()
     running = True
-
+    
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
