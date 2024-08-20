@@ -57,7 +57,7 @@ class Paddle():
 
     def resetPos(self):
         if not self.hasResetPos:
-            print("Paddle object does not have reset position.")
+            print(f"Paddle: {self.name} has no reset position.")
         else:
             self.setPos(self.resetX, self.resetY)
 

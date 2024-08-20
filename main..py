@@ -1,5 +1,6 @@
 import pygame 
 from paddle import Paddle
+from ball import Ball
 
 def main():
 
@@ -31,13 +32,15 @@ def main():
     #Universal Variables
 
     paddleHeight = displayInfo.current_h / 7
-    paddleWidth = displayInfo.current_w / 60
+    paddleWidth = paddleHeight / 5
 
     leftPaddle = Paddle(screen, name = "Left Paddle", w = paddleWidth, h = paddleHeight)
     rightPaddle = Paddle(screen, name = "Right Paddle", w = paddleWidth, h = paddleHeight)
+    ball = Ball(screen, name = "Ball", radius = paddleHeight / 4)
 
     leftPaddle.alignLC()
     rightPaddle.alignRC()
+    ball.centerCenter()
 
     leftPaddle.setResetCurrentPos()
     rightPaddle.setResetCurrentPos()
@@ -62,7 +65,7 @@ def main():
         #Loop
         screen.fill(displayBGColor)
 
-        updateAll(leftPaddle, rightPaddle)  
+        updateAll(leftPaddle, rightPaddle, ball)  
         
         clock.tick(240)
     
