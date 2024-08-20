@@ -49,6 +49,7 @@ def main():
     rightPaddle.printSelf()
 
     leftPaddle.maxYAccel()
+    leftPaddle.ySpeed = leftPaddle.maxSpeed
 
 
     while running:

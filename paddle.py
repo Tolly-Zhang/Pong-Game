@@ -7,8 +7,8 @@ defaultY = 0
 defaultW = 20
 defaultH = 100
 defaultColor = (255, 255, 255)
-defaultMaxSpeed = 100
-defaultMaxAccel = 50
+defaultMaxSpeed = 500
+defaultMaxAccel = 10000
 defautXSpeed = 0
 defaultYSpeed = 0
 defaultXAccel = 0
@@ -61,13 +61,24 @@ class Paddle():
         print(f"    Y Acceleration(px/s^2): {self.yAccel}")
 
     def update(self, deltaTime):
-        self.changeSpeed(deltaTime)
+        self.changeSpeeds(deltaTime)
         self.move(deltaTime)
         self.draw()
 
-    def changeSpeed(self, deltaTime):
-        self.xSpeed = min(self.maxSpeed, self.xSpeed + self.xAccel * deltaTime)
-        self.ySpeed = min(self.maxSpeed, self.ySpeed + self.yAccel * deltaTime)
+    def changeSpeeds(self, deltaTime):
+        self.xSpeed += self.xAccel * deltaTime
+        self.ySpeed += self.yAccel * deltaTime
+        self.trimSpeeds()
+
+    def trimSpeeds(self):
+        if self.xSpeed > self.maxSpeed:
+            self.xSpeed = self.maxSpeed
+        elif self.xSpeed < -1 * self.maxSpeed:
+            self.xSpeed = -1 * self.maxSpeed
+        if self.ySpeed > self.maxSpeed:
+            self.ySpeed = self.maxSpeed
+        elif self.ySpeed < -1 * self.maxSpeed:
+            self.ySpeed = -1 * self.maxSpeed
 
     def move(self, deltaTime):
         self.x += self.xSpeed * deltaTime
