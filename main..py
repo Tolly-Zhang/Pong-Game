@@ -15,7 +15,7 @@ def main():
 
     def updateAll(*args):
         for i in args:
-            i.update()
+            i.update(deltaTime)
         pygame.display.flip()  
 
     pygame.init()
@@ -48,6 +48,8 @@ def main():
     leftPaddle.printSelf()
     rightPaddle.printSelf()
 
+    leftPaddle.maxYAccel()
+
 
     while running:
 
@@ -63,11 +65,13 @@ def main():
             displayIsInitiated = isInitiated
             print(f"Window Status: {'Successful' if pygame.display.get_init() else 'Failed'}")
         #Loop
+        deltaTime = clock.tick(240) / 1000
         screen.fill(displayBGColor)
+        if abs(leftPaddle.ySpeed) == leftPaddle.maxSpeed:
+            leftPaddle.yAccel *= -1
 
         updateAll(leftPaddle, rightPaddle, ball)  
         
-        clock.tick(240)
     
             
 if __name__ == "__main__":
