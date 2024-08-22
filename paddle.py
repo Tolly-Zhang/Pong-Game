@@ -240,7 +240,7 @@ class Paddle():
         self.alignR()
         self.centerV()
 
-    #Edge Collision Check Top
+    #Edge Collision Check
 
     def checkEdgeCollisionX(self):
         output = {"Left": False, "Right": False}

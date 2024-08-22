@@ -4,11 +4,6 @@ from ball import Ball
 
 def main():
 
-    def quitGame():
-        if running:
-            running = False
-            print("Game Status: Aborted")
-
     def resetAll(*args):
         for i in args:
             i.reseetPos()
@@ -26,7 +21,6 @@ def main():
     screen = pygame.display.set_mode(displayNativeResolution, flags=pygame.FULLSCREEN)
     displayInfo = pygame.display.Info()
     clock = pygame.time.Clock()
-    running = True
     displayIsInitiated = False
 
     #Universal Variables
@@ -53,12 +47,15 @@ def main():
     leftPaddle.beginTargetingY()
     rightPaddle.beginTargetingY()
 
+    running = True
+    print("Game Status: Initiated")
     while running:
 
         #Check Window Status
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                quitGame()
+                running = False
+                print("Game Status: Aborted")
 
         #Check Window Initation
         isInitiated = pygame.display.get_init()
@@ -74,7 +71,6 @@ def main():
         #Key Pressing
         
         pressedKeys = pygame.key.get_pressed()
-
 
         if pressedKeys[pygame.K_w] and not pressedKeys[pygame.K_s]:
             leftPaddle.setYTargetSpeed(-leftPaddle.maxSpeed)
