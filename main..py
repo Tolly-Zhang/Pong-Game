@@ -7,11 +7,11 @@ def main():
     def quitGame():
         if running:
             running = False
-            print("Window Status: Aborted")
+            print("Game Status: Aborted")
 
-    def resetAll():
-        leftPaddle.resetPos()
-        rightPaddle.resetPos()
+    def resetAll(*args):
+        for i in args:
+            i.reseetPos()
 
     def updateAll(*args):
         for i in args:
@@ -47,33 +47,50 @@ def main():
 
     leftPaddle.printSelf()
     rightPaddle.printSelf()
+    leftPaddle.setStartStopTimee(0.2)
+    rightPaddle.setStartStopTimee(0.2)
 
-    leftPaddle.maxYAccel()
-    leftPaddle.ySpeed = leftPaddle.maxSpeed
-
+    leftPaddle.beginTargetingY()
+    rightPaddle.beginTargetingY()
 
     while running:
 
         #Check Window Status
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running  = False
-                print("Game Status: Aborted")
+                quitGame()
 
         #Check Window Initation
         isInitiated = pygame.display.get_init()
         if isInitiated != displayIsInitiated:
             displayIsInitiated = isInitiated
             print(f"Window Status: {'Successful' if pygame.display.get_init() else 'Failed'}")
-        #Loop
-        deltaTime = clock.tick(240) / 1000
-        screen.fill(displayBGColor)
-        if abs(leftPaddle.ySpeed) == leftPaddle.maxSpeed:
-            leftPaddle.yAccel *= -1
 
-        updateAll(leftPaddle, rightPaddle, ball)  
+        deltaTime = clock.tick(240) / 1000.0
+        screen.fill(displayBGColor)
+
+        #Loop
+
+        #Key Pressing
         
-    
-            
+        pressedKeys = pygame.key.get_pressed()
+
+
+        if pressedKeys[pygame.K_w] and not pressedKeys[pygame.K_s]:
+            leftPaddle.setYTargetSpeed(-leftPaddle.maxSpeed)
+        elif pressedKeys[pygame.K_s] and not pressedKeys[pygame.K_w]:
+            leftPaddle.setYTargetSpeed(leftPaddle.maxSpeed)
+        elif pressedKeys[pygame.K_w] == pressedKeys[pygame.K_s]:
+            leftPaddle.setYTargetSpeed(0)
+
+        if pressedKeys[pygame.K_UP] and not pressedKeys[pygame.K_DOWN]:
+            rightPaddle.setYTargetSpeed(-rightPaddle.maxSpeed)
+        elif pressedKeys[pygame.K_DOWN] and not pressedKeys[pygame.K_UP]:
+            rightPaddle.setYTargetSpeed(rightPaddle.maxSpeed)
+        elif pressedKeys[pygame.K_UP] == pressedKeys[pygame.K_DOWN]:
+            rightPaddle.setYTargetSpeed(0)
+
+        updateAll(leftPaddle, rightPaddle, ball)
+        
 if __name__ == "__main__":
     main()
