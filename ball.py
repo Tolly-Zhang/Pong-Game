@@ -1,5 +1,6 @@
 import pygame
 import math
+import pygame.gfxdraw  # Import gfxdraw for anti-aliased drawing
 
 defaultName = "Ball"
 defaultNameNum = 0
@@ -7,7 +8,7 @@ defaultX = 0
 defaultY = 0
 defaultRadius = 50
 defaultColor = (255, 255, 255)
-defaultMaxSpeed = 10
+defaultMaxSpeed = 100
 defaultTrueSpeed = 0
 defaultAngle = 0
 defaultXSpeed = 0
@@ -28,6 +29,10 @@ class Ball():
         self.color = color
         self.radius = radius
         self.maxSpeed = maxSpeed
+        # Initialize movement
+        self.trueSpeed = maxSpeed
+        self.angle = math.radians(45)  # Start at 45 degrees
+        self.updateSpeedComponents()
         #VARIABLES
         self.x = x
         self.y = y
@@ -37,28 +42,31 @@ class Ball():
         self.ySpeed = ySpeed
         self.deccel = deccel
         self.hasResetPos = False
+        self.screenW = self.screen.get_width()
+        self.screenH = self.screen.get_height()
 
     def setAngle(self, angle):
         self.angle = angle
+        self.updateSpeedComponents()
     
     def setTrueSpeed(self, trueSpeed):
         self.trueSpeed = trueSpeed
+        self.updateSpeedComponents()
 
     def printSelf(self):
         print(f"Ball Name: {self.name}")
         print(f"    Diameter(d):            {self.radius}")
         print(f"    Position(x, y):         ({self.x}, {self.y})")
         print(f"    Color(r, g, b):         {self.color}")
-        print(f"    maxSpeed(px/s)          {self.maxspeed}")
+        print(f"    maxSpeed(px/s)          {self.maxSpeed}")
         print(f"    Decceleration(px/s^2):  {self.deccel}")
     
-    def update(self, deltaTime):
-        self.draw()
+    def update(self, deltaTime, paddles):
         self.DeccelTrueSpeed(deltaTime)
-        self.updateSpeedComponents()
         self.move(deltaTime)
+        self.checkCollisions(paddles)
+        self.draw()
 
-    
     def DeccelTrueSpeed(self, deltaTime):
         self.trueSpeed += self.deccel * deltaTime
 
@@ -71,7 +79,9 @@ class Ball():
         self.y += self.ySpeed * deltaTime
 
     def draw(self):
-        pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.radius)
+        int_radius = int(self.radius)
+        pygame.gfxdraw.aacircle(self.screen, int(self.x), int(self.y), int_radius, self.color)
+        pygame.gfxdraw.filled_circle(self.screen, int(self.x), int(self.y), int_radius, self.color)
 
     def setPos(self, x, y):
         self.x = x
@@ -85,7 +95,7 @@ class Ball():
         self.resetY = y
         self.hasResetPos = True
 
-    def resetPos(self):
+    def resetPosition(self):
         if not self.hasResetPos:
             print(f"Ball: {self.name} has no reset position.")
         else:
@@ -93,7 +103,7 @@ class Ball():
 
     def resetToPos(self, x, y):
         self.setResetPos(x, y)
-        self.resetPos()
+        self.resetPosition()
 
     def centerH(self):
         self.x = self.screenInfo.current_w / 2
@@ -104,3 +114,24 @@ class Ball():
     def centerCenter(self):
         self.centerH()
         self.centerV()
+
+    def checkCollisions(self, paddles):
+        # Collide with top and bottom edges
+        if self.y - self.radius <= 0 or self.y + self.radius >= self.screenH:
+            self.ySpeed *= -1
+
+        # Collide with paddles
+        for paddle in paddles:
+            if self.collides_with_paddle(paddle):
+                self.xSpeed *= -1
+                self.trueSpeed += 50  # Increase speed on paddle collision
+                self.updateSpeedComponents()
+                break
+
+    def collides_with_paddle(self, paddle):
+        return (
+            self.x - self.radius < paddle.x + paddle.w and
+            self.x + self.radius > paddle.x and
+            self.y - self.radius < paddle.y + paddle.h and
+            self.y + self.radius > paddle.y
+        )

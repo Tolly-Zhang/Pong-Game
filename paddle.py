@@ -1,4 +1,5 @@
 import pygame
+import pygame.gfxdraw  # Import gfxdraw for anti-aliased drawing
 
 defaultName = "Paddle"
 defaultNameNum = 0
@@ -16,7 +17,7 @@ defaultXAccel = 0
 defaultYAccel = 0
 
 class Paddle():
-    def __init__(self, screen = None, name = defaultName, x = defaultX, y = defaultY, w = defaultW, h = defaultH, color=defaultColor, maxSpeed = defaultMaxSpeed, instantStop = defaultInstantStop, maxAccel = defaultMaxAccel, xSpeed = defautXSpeed, ySpeed = defaultYSpeed, xAccel = defaultXAccel, yAccel = defaultYAccel):
+    def __init__(self, screen=None, name=defaultName, x=defaultX, y=defaultY, w=defaultW, h=defaultH, color=defaultColor, maxSpeed=defaultMaxSpeed, instantStop=defaultInstantStop, maxAccel=defaultMaxAccel, xSpeed=defautXSpeed, ySpeed=defaultYSpeed, xAccel=defaultXAccel, yAccel=defaultYAccel):
         global defaultNameNum
 
         #CONSTANTS
@@ -26,9 +27,9 @@ class Paddle():
             name += " " + str(defaultNameNum)
             defaultNameNum += 1
         self.name = name
-        if screen != None:
-            self.screenW = self.screen.getW()
-            self.screenH = self.screen.getH()
+        if screen is not None:
+            self.screenW = self.screen.get_width()
+            self.screenH = self.screen.get_height()
         self.w = w
         self.h = h
         self.color = color
@@ -66,6 +67,8 @@ class Paddle():
 
     def setScreen(self, screen):
         self.screen = screen
+        self.screenW = self.screen.get_width()
+        self.screenH = self.screen.get_height()
         print(f"{self}'s screen has been set to {self.screen}.")
 
     #Updating and Motion
@@ -77,7 +80,7 @@ class Paddle():
         self.draw()
 
     def draw(self): 
-        pygame.draw.rect(self.screen, self.color, pygame.Rect((self.x, self.y), (self.w, self.h)))
+        pygame.gfxdraw.box(self.screen, pygame.Rect((self.x, self.y), (self.w, self.h)), self.color)
 
     def move(self, deltaTime):
         self.x += self.xSpeed * deltaTime
@@ -114,7 +117,7 @@ class Paddle():
         self.xTrimSpeed()
 
     def yChangeSpeedByAccel(self, deltaTime):
-        self.xSpeed += self.xAccel * deltaTime
+        self.ySpeed += self.yAccel * deltaTime
         self.yTrimSpeed()
 
     def xTrimSpeed(self):
@@ -155,7 +158,7 @@ class Paddle():
         elif self.xSpeed > self.xTargetSpeed:
             self.xSpeed -= speedChange
 
-    def ysetTargetSpeed(self, speed):
+    def ySetTargetSpeed(self, speed):
         self.yTargetSpeed = speed
 
     def yBeginAimingSpeed(self):
@@ -182,7 +185,7 @@ class Paddle():
         elif self.ySpeed > self.yTargetSpeed:
             self.ySpeed -= speedChange
 
-    def setStartStopTimee(self, sec):
+    def setStartStopTime(self, sec):
         if sec == 0:
             self.instantStop = True
             print(f"{self} will now Start or Stop instantly.")
@@ -233,7 +236,7 @@ class Paddle():
             self.setPosition(self.xResetPosition, self.yResetPosition)
             print(f"{self} has been reset to a position of ({self.x}, {self.y}).")
 
-    def setResetPosition(self):
+    def setResetCurrentPosition(self):
         self.setResetPosition(self.x, self.y)
 
     def setResetPosition(self, x, y):

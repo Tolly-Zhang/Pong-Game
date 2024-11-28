@@ -54,10 +54,10 @@ class Screen():
                 del self.objects[item]
                 print(f"Object {item} removed succesfully.")
 
-    def update(self, *args):
+    def update(self, deltaTime, *args):
         if not args:
             for item in self.objects:
-                item.update()
+                item.update(deltaTime)
         else:
             for item in args:
-                item.update()
+                item.update(deltaTime)
